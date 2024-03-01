@@ -1,120 +1,73 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-
-const search_api = process.env.REACT_APP_AUTOCOMPLETE;
-const recentGames_api = process.env.REACT_APP_RECENT;
+import { useState } from 'react';
+import { RecentGames } from './Components/RecentGames';
+import { Routes, Route } from 'react-router-dom';
+import { Search } from './Components/Search';
+import { Navbar } from './Components/Navbar';
 
 function App() {
   const [searchItem, setSearchItem] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [profile, setProfile] = useState(false);
   const [player, setPlayer] = useState('');
-  const [games, setGames] = useState([]);
-
-  //Requesting autocomplete suggestions
-
-  useEffect(() => {
-    const func = async () => {
-      if (searchItem.length < 3)
-        return;
-      const data = await axios.get(search_api + `?term=${searchItem}&object=1`);
-      setSearchResults(data.data.result);
-      console.log(data);
-    }
-    func();
-  }, [searchItem]);
-
-  //Requesting recent games
-
-  useEffect(() => {
-    const recentGames = async () => {
-      if (!player)
-        return;
-      const data = await axios.get(recentGames_api + `?player=${player}&color=white&recentGames=5`, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      setGames(data.data.recentGames);
-    }
-    recentGames();
-  }, [player]);
 
   //Display search results
 
   const displayResults = searchResults ? searchResults.map(t =>
-    <div className='flex w-screen mb-1' key={t.name}>
-      <h2 className='text-xl w-1/3'>{t.name}</h2>
-      <a href={`https://lichess.org/@/${t.name}`} className='w-1/3 text-xl text-blue-300 underline hover:text-blue-500'>{`https://lichess.org/@/${t.name}`}</a>
-      <h2 className=' w-1/3 text-xl text-green-300 hover:cursor-pointer underline hover:text-green-500' onClick={() => {
+    <div className='flex w-full mb-1 justify-center' key={t.name}>
+      <h2 className=' w-1/3 text-xl text-center text-green-300 hover:cursor-pointer underline hover:text-green-500 rounded-md hover:bg-slate-200' onClick={() => {
         setPlayer(t.name);
         setProfile(true);
       }}>{t.name}</h2>
-    </div>) : '';
-
-  //Display recent games
-
-  const displayGames = games ? games.map(t =>
-    <div className='flex w-screen' key={t.name}>
-      {(t.white.name === player) ? <h1 className='w-1/6'>White</h1> : <h1 className='w-1/5'>Black</h1>}
-      {(t.white.name === player) ? <h1 className='w-1/6'>Black</h1> : <h1 className='w-1/5'>White</h1>}
-      <h1 className='w-1/6'>{t.winner}</h1>
-      <h1 className='w-1/6'>{t.speed}</h1>
-      <h1 className='w-1/6'>{t.mode}</h1>
-      <a href={`https://lichess.org/${t.id}`} className='w-1/6 text-blue-600'>Game Link</a>
+      <a href={`https://lichess.org/@/${t.name}`} className='w-2/3 text-xl text-blue-300 underline hover:text-blue-500 rounded-md hover:bg-slate-200 overflow-hidden'>
+        {`https://lichess.org/@/${t.name}`}
+      </a>
     </div>) : '';
 
   return (
-    <div className='flex flex-col items-center h-screen px-5'>
-      <header className="bg-white w-full flex items-center justify-center fixed top-0 max-sm:static -z-0 py-4 shadow-lg">
-        <h1 className='text-5xl ml-4'>Lichess</h1>
-        <nav className="ml-auto w-96 max-sm:hidden">
-          <ul className="flex justify-between mr-8">
-            <li>Home</li>
-            <li>Features</li>
-            <li>Contact Us</li>
-            <li className='text-red-600 hover:cursor-pointer'>Log Out</li>
-          </ul>
-        </nav>
-      </header>
-      <input
-        style={{ border: '1px solid black' }}
-        className='rounded-lg h-16 mt-24 mb-12 max-sm:mt-5 text-4xl w-1/2 border-black border-1 p-2 max-sm:w-full'
-        placeholder='Username'
-        type='text'
-        value={searchItem}
-        onChange={(e) => {
-          setSearchItem(e.target.value);
-          setProfile(false);
-        }}
-      />
-      {(profile === false) ?
-        <>
-          <div className='flex w-full'>
-            <h1 className='w-1/2 text-2xl'>Username</h1>
-            <h1 className='w-1/2 text-2xl'>Lichess URL</h1>
-            <h1 className='w-1/2 text-2xl'>Additional Info</h1>
+    <div>
+      <div className='flex flex-col items-center h-full px-5 mb-20'>
+        <Navbar />
+
+        {/* Search results */}
+
+        <Search
+          searchItem={searchItem}
+          setSearchItem={setSearchItem}
+          setProfile={setProfile}
+          setSearchResults={setSearchResults}
+        />
+        {(profile === false&&displayResults.length>0) ?
+          <div className='w-full flex justify-center mt-20 absolute z-10 transition'>
+            <div className='w-1/2 max-sm:w-full max-sm:mx-5 flex flex-col items-center rounded-lg border-black border overflow-hidden bg-white'>
+              <div className='flex w-full justify-center'>
+                <h1 className='w-1/3 text-2xl text-center overflow-hidden'>Username</h1>
+                <h1 className='w-2/3 text-2xl text-center overflow-hidden'>Lichess Handle</h1>
+              </div>
+              {displayResults}
+            </div>
+          </div> : ''}
+      </div>
+      <Routes>
+        <Route path='/contact' element={<div></div>} />
+        <Route path='/' element={
+          <div className='flex flex-col w-full sm:mt-48'>
+            <h1 className='text-4xl mb-4 inline max-sm:text-lg'>
+              Recent games
+              <span className='text-red-600 inline'>(This API is taking almost a minute to load)</span>
+            </h1>
+            <div className='flex w-full'>
+              <h1 className='w-1/6 text-xl font-bold max-sm:text-sm'>Color ({player})</h1>
+              <h1 className='w-1/6 text-xl font-bold max-sm:text-sm'>Color (Opponent)</h1>
+              <h1 className='w-1/6 text-xl font-bold max-sm:text-sm'>Winner</h1>
+              <h1 className='w-1/6 text-xl font-bold max-sm:text-sm'>Format</h1>
+              <h1 className='w-1/6 text-xl font-bold max-sm:text-sm'>Mode</h1>
+              <h1 className='w-1/6 text-xl font-bold max-sm:text-sm'>Game Link</h1>
+            </div>
+            <RecentGames player={player} />
           </div>
-          <div>
-            {displayResults}
-          </div>
-        </> :
-        <div className='flex flex-col w-full'>
-          <h1 className='text-4xl mb-4 inline'>
-            Recent games
-            <span className='text-red-600 inline'>(This API is taking almost a minute to load)</span>
-          </h1>
-          <div className='flex w-full'>
-            <h1 className='w-1/6'>Color ({player})</h1>
-            <h1 className='w-1/6'>Color (Opponent)</h1>
-            <h1 className='w-1/6'>Winner</h1>
-            <h1 className='w-1/6'>Format</h1>
-            <h1 className='w-1/6'>Mode</h1>
-            <h1 className='w-1/6'>Game Link</h1>
-          </div>
-          {displayGames}
-        </div>
-      }
+        }
+        />
+      </Routes>
     </div>
   );
 }
