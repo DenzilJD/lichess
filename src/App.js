@@ -62,9 +62,20 @@ function App() {
 
   return (
     <div className='flex flex-col items-center h-screen px-5'>
+      <header className="bg-white w-full flex items-center justify-center fixed top-0 max-sm:static -z-0 py-4 shadow-lg">
+                <h1 className='text-5xl ml-4'>Lichess</h1>
+                <nav className="ml-auto w-96 max-sm:hidden">
+                    <ul className="flex justify-between mr-8">
+                        <li>Home</li>
+                        <li>Features</li>
+                        <li>Contact Us</li>
+                        <li className='text-red-600 hover:cursor-pointer'>Log Out</li>
+                    </ul>
+                </nav>
+            </header>
       <input
         style={{ border: '1px solid black' }}
-        className='rounded-lg h-16 my-12 max-sm:mt-5 text-4xl w-1/2 border-black border-1 p-2 max-sm:w-full'
+        className='rounded-lg h-16 mt-24 mb-12 max-sm:mt-5 text-4xl w-1/2 border-black border-1 p-2 max-sm:w-full'
         placeholder='Username'
         type='text'
         value={searchItem}
