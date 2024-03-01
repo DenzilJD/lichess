@@ -48,16 +48,16 @@ function App() {
         setProfile(true);
       }}>{t.name}</h2>
     </div>) : '';
-  
+
   //Display Recent Games
 
   const displayGames = games ? games.map(t =>
-    <div key={t.name}>
-      {(t.white.name === player) ? <h1>White</h1> : <h1>Black</h1>}
-      {(t.white.name !== player) ? <h1>Black</h1> : <h1>White</h1>}
-      <h1>{t.winner}</h1>
-      <h1>{t.speed}</h1>
-      <h1>{t.mode}</h1>
+    <div className='flex w-screen' key={t.name}>
+      {(t.white.name === player) ? <h1 className='w-1/5'>White</h1> : <h1 className='w-1/5'>Black</h1>}
+      {(t.white.name === player) ? <h1 className='w-1/5'>Black</h1> : <h1 className='w-1/5'>White</h1>}
+      <h1 className='w-1/5'>{t.winner}</h1>
+      <h1 className='w-1/5'>{t.speed}</h1>
+      <h1 className='w-1/5'>{t.mode}</h1>
     </div>) : '';
 
   return (
@@ -68,7 +68,10 @@ function App() {
         placeholder='Username'
         type='text'
         value={searchItem}
-        onChange={(e) => setSearchItem(e.target.value)}
+        onChange={(e) => {
+          setSearchItem(e.target.value);
+          setProfile(false);
+        }}
       />
       {(profile === false) ?
         <>
@@ -82,13 +85,16 @@ function App() {
           </div>
         </> :
         <div className='flex flex-col w-full'>
-          <h1 className='text-4xl mb-4'>Recent Games</h1>
-          <div className='flex w-full justify-between'>
-            <h1>Color ({player})</h1>
-            <h1>Color (Opponent)</h1>
-            <h1>Winner</h1>
-            <h1>Format</h1>
-            <h1>Mode</h1>
+          <h1 className='text-4xl mb-4 inline'>
+            Recent games
+            <span className='text-red-600 inline'>(This API is taking almost a minute to load)</span>
+          </h1>
+          <div className='flex w-full'>
+            <h1 className='w-1/5'>Color ({player})</h1>
+            <h1 className='w-1/5'>Color (Opponent)</h1>
+            <h1 className='w-1/5'>Winner</h1>
+            <h1 className='w-1/5'>Format</h1>
+            <h1 className='w-1/5'>Mode</h1>
           </div>
           {displayGames}
         </div>
