@@ -43,10 +43,10 @@ function App() {
   //Display search results
 
   const displayResults = searchResults ? searchResults.map(t =>
-    <div className='flex w-screen' key={t.name}>
+    <div className='flex w-screen mb-1' key={t.name}>
       <h2 className='text-xl w-1/3'>{t.name}</h2>
-      <a href={`https://lichess.org/@/${t.name}`} className='w-1/3 text-xl text-blue-300'>{`https://lichess.org/@/${t.name}`}</a>
-      <h2 className=' w-1/3 text-xl text-green-300 hover:cursor-pointer' onClick={() => {
+      <a href={`https://lichess.org/@/${t.name}`} className='w-1/3 text-xl text-blue-300 underline hover:text-blue-500'>{`https://lichess.org/@/${t.name}`}</a>
+      <h2 className=' w-1/3 text-xl text-green-300 hover:cursor-pointer underline hover:text-green-500' onClick={() => {
         setPlayer(t.name);
         setProfile(true);
       }}>{t.name}</h2>
